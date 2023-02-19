@@ -90,6 +90,23 @@ TEST(get, get_not_existed)
 	EXPECT_EQ(hash_map_get(table, "key", &value), KEY_ERROR);
 }
 
+TEST(get, get_collision)
+{
+	hash_map_t* table = hash_map_ctor();
+	hash_map_put(table, "abc", 1);
+	hash_map_put(table, "cba", 2);
+	hash_map_put(table, "bca", 3);
+	hash_map_put(table, "cab", 4);
+	int value;
+	EXPECT_EQ(hash_map_get(table, "abc", &value), OK);
+	EXPECT_EQ(value, 1);
+	EXPECT_EQ(hash_map_get(table, "cba", &value), OK);
+	EXPECT_EQ(value, 2);
+	EXPECT_EQ(hash_map_get(table, "bca", &value), OK);
+	EXPECT_EQ(value, 3);
+	EXPECT_EQ(hash_map_get(table, "cab", &value), OK);
+}
+
 //pop
 TEST(pop, pop_existed_first)
 {
@@ -193,6 +210,12 @@ TEST(reserve, reserve_same_allocated)
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	EXPECT_EQ(hash_map_reserve(table, table->allocated), OK);
+}
+
+TEST(reserve_max, reserve_more_than_possible)
+{
+	hash_map_t* table = hash_map_ctor();
+	EXPECT_EQ(hash_map_reserve(table, SIZE_MAX), MEMORY_ERROR);
 }
 
 // clear
