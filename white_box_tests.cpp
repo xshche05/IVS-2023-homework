@@ -32,25 +32,34 @@
 //       indexu
 //============================================================================//
 
-// ctor
-TEST(ctor, ctor)
+class HashMapTest : public ::testing::Test
 {
-	hash_map_t* table = hash_map_ctor();
-	EXPECT_TRUE(table != nullptr);
-}
+	void SetUp() override
+	{
+		table = hash_map_ctor();
+		ASSERT_NE(table, nullptr);
+	}
+
+	void TearDown() override
+	{
+		hash_map_dtor(table);
+		EXPECT_EQ(table->allocated, 0);
+	}
+
+	protected:
+		hash_map_t* table;
+};
 
 // put
-TEST(put, put_one)
+TEST_F(HashMapTest, put_one)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_put(table, "key", 1), OK);
 }
 
-TEST(put, put_more_than_could_fit)
+TEST_F(HashMapTest, put_more_than_could_fit)
 {
-	hash_map_t* table = hash_map_ctor();
 	std::string key;
-	int allocated = table->allocated;
+	size_t allocated = table->allocated;
 
 	for (int i = 0; i < allocated+1; i++)
 	{
@@ -59,40 +68,35 @@ TEST(put, put_more_than_could_fit)
 	}
 }
 
-TEST(put, put_existed_key)
+TEST_F(HashMapTest, put_existed_key)
 {
-	hash_map_t* table = hash_map_ctor();
 	ASSERT_EQ(hash_map_put(table, "key", 1), OK);
 	EXPECT_EQ(hash_map_put(table, "key", 2), KEY_ALREADY_EXISTS);
 }
 
-TEST(put, put_collision)
+TEST_F(HashMapTest, put_collision)
 {
-	hash_map_t* table = hash_map_ctor();
 	ASSERT_EQ(hash_map_put(table, "abc", 1), OK);
 	EXPECT_EQ(hash_map_put(table, "cba", 2), OK);
 }
 
 // get
-TEST(get, get_existed)
+TEST_F(HashMapTest, get_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	int value;
 	EXPECT_EQ(hash_map_get(table, "key", &value), OK);
 	EXPECT_EQ(value, 1);
 }
 
-TEST(get, get_not_existed)
+TEST_F(HashMapTest, get_not_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	int value;
 	EXPECT_EQ(hash_map_get(table, "key", &value), KEY_ERROR);
 }
 
-TEST(get, get_collision)
+TEST_F(HashMapTest, get_collision)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "abc", 1);
 	hash_map_put(table, "cba", 2);
 	hash_map_put(table, "bca", 3);
@@ -108,18 +112,16 @@ TEST(get, get_collision)
 }
 
 //pop
-TEST(pop, pop_existed_first)
+TEST_F(HashMapTest, pop_existed_first)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	int value;
 	EXPECT_EQ(hash_map_pop(table, "key", &value), OK);
 	EXPECT_EQ(value, 1);
 }
 
-TEST(pop, pop_existed_last)
+TEST_F(HashMapTest, pop_existed_last)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	int value;
@@ -127,9 +129,8 @@ TEST(pop, pop_existed_last)
 	EXPECT_EQ(value, 2);
 }
 
-TEST(pop, pop_existed_not_first_or_last)
+TEST_F(HashMapTest, pop_existed_not_first_or_last)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	hash_map_put(table, "key3", 3);
@@ -138,102 +139,81 @@ TEST(pop, pop_existed_not_first_or_last)
 	EXPECT_EQ(value, 2);
 }
 
-TEST(pop, pop_not_existed)
+TEST_F(HashMapTest, pop_not_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	int value;
 	EXPECT_EQ(hash_map_pop(table, "key", &value), KEY_ERROR);
 }
 
 // remove
-TEST(remove, remove_existed)
+TEST_F(HashMapTest, remove_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	EXPECT_EQ(hash_map_remove(table, "key"), OK);
 }
 
-TEST(remove, remove_not_existed)
+TEST_F(HashMapTest, remove_not_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_remove(table, "key"), KEY_ERROR);
 }
 
 // contains
-TEST(contains, contains_existed)
+TEST_F(HashMapTest, contains_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	EXPECT_EQ(hash_map_contains(table, "key"), true);
 }
 
-TEST(contains, contains_not_existed)
+TEST_F(HashMapTest, contains_not_existed)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_contains(table, "key"), false);
 }
 
 // size
-TEST(size, size)
+TEST_F(HashMapTest, size)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_size(table), table->used);
 }
 
 // capacity
-TEST(capacity, capacity)
+TEST_F(HashMapTest, capacity)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_capacity(table), table->allocated);
 }
 
 // reserve
-TEST(reserve, reserve_less_used)
+TEST_F(HashMapTest, reserve_less_used)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	EXPECT_EQ(hash_map_reserve(table, table->used-1), VALUE_ERROR);
 }
 
-TEST(reserve, reserve_more_allocated)
+TEST_F(HashMapTest, reserve_more_allocated)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	EXPECT_EQ(hash_map_reserve(table, table->allocated+1), OK);
 }
 
-TEST(reserve, reserve_same_allocated)
+TEST_F(HashMapTest, reserve_same_allocated)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
 	EXPECT_EQ(hash_map_reserve(table, table->allocated), OK);
 }
 
-TEST(reserve_max, reserve_more_than_possible)
+TEST_F(HashMapTest, reserve_more_than_sys_possible)
 {
-	hash_map_t* table = hash_map_ctor();
 	EXPECT_EQ(hash_map_reserve(table, SIZE_MAX), MEMORY_ERROR);
 }
 
 // clear
-TEST(clear, clear)
+TEST_F(HashMapTest, clear)
 {
-	hash_map_t* table = hash_map_ctor();
 	hash_map_put(table, "key", 1);
 	hash_map_clear(table);
 	EXPECT_EQ(table->used, 0);
-}
-
-// dtor
-TEST(dtor, dtor)
-{
-	hash_map_t* table = hash_map_ctor();
-	hash_map_put(table, "key", 1);
-	hash_map_dtor(table);
-	EXPECT_EQ(table->allocated, 0);
 }
 
 /*** Konec souboru white_box_tests.cpp ***/
