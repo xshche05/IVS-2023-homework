@@ -22,7 +22,7 @@
 #include <stdexcept>
 #include <iostream>
 
-
+class Edge;
 /**
  * @brief reprezentace uzlu
  */
@@ -30,6 +30,7 @@ struct Node{
     size_t id;  ///< jednoznačný identifikátor uzlu
     size_t color;  ///< celé číslo reprezentující barvu uzlu, výchozí barva je 0 a značí neobarveno
     // doplňte vhodné struktury, pokud potřebujete
+	std::vector<Edge*>* edges;
 };
 
 /**
@@ -144,7 +145,7 @@ public:
      * @param edge hrana, která nás zajímá
      * @return true pokud hrana existuje, jinak false
      */
-    bool containsEdge(const Edge& edge) const;
+    bool containsEdge(const Edge& edge);
 
     /**
      * odstraní uzel z grafu
@@ -179,12 +180,12 @@ public:
      * @return počet hran, které mají tento uzel za svůj jeden koncový bod
      * @exception out_of_range pokud uzel v grafu neexistuje
      */
-    size_t nodeDegree(size_t nodeId) const;
+    size_t nodeDegree(size_t nodeId);
 
     /**
      * @return maximální stupeň uzlu v grafu
      */
-    size_t graphDegree() const;
+    size_t graphDegree();
 
     /**
      * Provede obarvení uzlů v grafu. Obarvení je uloženo v atributu color v daném uzlu.
@@ -202,8 +203,10 @@ public:
     void clear();
 
 protected:
-    // doplňte vhodné struktury
-
+    std::vector<Node*> m_nodes;
+	std::vector<Edge*> m_edges;
+	size_t m_nodeCount;
+	size_t m_edgeCount;
 };
 
 #endif // TDD_CODE_H_
