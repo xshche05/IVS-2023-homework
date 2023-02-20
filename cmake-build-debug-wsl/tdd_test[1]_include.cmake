@@ -1,5 +1,0 @@
-if(EXISTS "/home/xshche05/ivs/cmake-build-debug-wsl/tdd_test[1]_tests.cmake")
-  include("/home/xshche05/ivs/cmake-build-debug-wsl/tdd_test[1]_tests.cmake")
-else()
-  add_test(tdd_test_NOT_BUILT tdd_test_NOT_BUILT)
-endif()
