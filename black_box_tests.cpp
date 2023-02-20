@@ -3,12 +3,12 @@
 // Purpose:     Red-Black Tree - public interface tests
 //
 // $NoKeywords: $ivs_project_1 $black_box_tests.cpp
-// $Author:     JMENO PRIJMENI <xlogin00@stud.fit.vutbr.cz>
-// $Date:       $2017-01-04
+// $Author:     Kirill Shchetiniuk <xshche05@stud.fit.vutbr.cz>
+// $Date:       $2023-02-20
 //============================================================================//
 /**
  * @file black_box_tests.cpp
- * @author JMENO PRIJMENI
+ * @author Kirill Shchetiniuk
  * 
  * @brief Implementace testu binarniho stromu.
  */
