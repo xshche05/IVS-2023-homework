@@ -49,7 +49,7 @@ endif()
 
 add_custom_target(pack
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        COMMAND ${CMAKE_COMMAND} -E tar "cfv" "xlogin00.zip" --format=zip
+        COMMAND ${CMAKE_COMMAND} -E tar "cfv" "xshche05.zip" --format=zip
         "black_box_tests.cpp"
         "white_box_tests.cpp"
         "tdd_code.h"

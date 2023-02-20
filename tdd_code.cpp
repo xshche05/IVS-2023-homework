@@ -61,6 +61,10 @@ Node* Graph::addNode(size_t nodeId) {
 	node->id = nodeId;
 	node->color = 0;
 	node->edges = new std::vector<Edge*>(0);
+	if (!node->edges) {
+		free(node);
+		return nullptr;
+	}
 	m_nodes.push_back(node);
 	m_nodeCount++;
 	return node;
