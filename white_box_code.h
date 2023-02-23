@@ -30,7 +30,7 @@
 /** Inicializační velikost tabulky. */
 #define HASH_MAP_INIT_SIZE 8                    
 /** Parametr použit v hledání dalšího indexu při kolizi. */
-#define HASH_MAP_PERTURB_SHIFT 5                
+#define HASH_MAP_PERTURB_SHIFT 5
 /** Mez zaplnění kdy se má realokovat velikost tabulky. */
 #define HASH_MAP_REALLOCATION_THRESHOLD 3/5.
 /** Hyperparametr v hašovácí funkci. */

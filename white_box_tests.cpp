@@ -101,14 +101,21 @@ TEST_F(HashMapTest, get_collision)
 	hash_map_put(table, "cba", 2);
 	hash_map_put(table, "bca", 3);
 	hash_map_put(table, "cab", 4);
+	hash_map_put(table, "bac", 5);
+	hash_map_put(table, "acb", 6);
 	int value;
-	EXPECT_EQ(hash_map_get(table, "abc", &value), OK);
+	ASSERT_EQ(hash_map_get(table, "abc", &value), OK);
 	EXPECT_EQ(value, 1);
-	EXPECT_EQ(hash_map_get(table, "cba", &value), OK);
+	ASSERT_EQ(hash_map_get(table, "cba", &value), OK);
 	EXPECT_EQ(value, 2);
-	EXPECT_EQ(hash_map_get(table, "bca", &value), OK);
+	ASSERT_EQ(hash_map_get(table, "bca", &value), OK);
 	EXPECT_EQ(value, 3);
-	EXPECT_EQ(hash_map_get(table, "cab", &value), OK);
+	ASSERT_EQ(hash_map_get(table, "cab", &value), OK);
+	EXPECT_EQ(value, 4);
+	ASSERT_EQ(hash_map_get(table, "bac", &value), OK);
+	EXPECT_EQ(value, 5);
+	ASSERT_EQ(hash_map_get(table, "acb", &value), OK);
+	EXPECT_EQ(value, 6);
 }
 
 //pop
