@@ -100,7 +100,7 @@ bool Graph::addEdge(const Edge& edge){
 
 void Graph::addMultipleEdges(const std::vector<Edge>& edges) {
 	for (auto edge : edges) {
-		this->addEdge(edge);
+		addEdge(edge);
 	}
 }
 
