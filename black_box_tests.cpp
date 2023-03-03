@@ -33,55 +33,41 @@
 //      *STEJNY* pocet cernych uzlu.
 //============================================================================//
 
-TEST(EmptyTree, InsertNode_True)
+TEST(EmptyTree, InsertNode)
 {
 	BinaryTree tree;
-	EXPECT_EQ(tree.InsertNode(1).first, true);
+	std::pair<bool, Node_t*> pair = tree.InsertNode(1);
+	ASSERT_EQ(pair.first, true);
+	EXPECT_NE(pair.second, nullptr);
 }
 
-TEST(EmptyTree, InsertNode_NotNullPtr)
-{
-	BinaryTree tree;
-	EXPECT_NE(tree.InsertNode(1).second, nullptr);
-}
-
-TEST(EmptyTree, DeleteNode_false)
+TEST(EmptyTree, DeleteNode)
 {
 	BinaryTree tree;
 	EXPECT_EQ(tree.DeleteNode(1), false);
 }
 
-TEST(EmptyTree, FindNode_nullptr)
+TEST(EmptyTree, FindNode)
 {
 	BinaryTree tree;
 	EXPECT_EQ(tree.FindNode(1), nullptr);
 }
 
-TEST(NonEmptyTree, InsertNode_SameKey_bool)
+TEST(NonEmptyTree, InsertNode_SameKey)
 {
 	BinaryTree tree;
-	tree.InsertNode(1);
-	EXPECT_EQ(tree.InsertNode(1).first, false);
+	std::pair<bool, Node_t*> pair_before = tree.InsertNode(1);
+	std::pair<bool, Node_t*> pair = tree.InsertNode(1);
+	EXPECT_EQ(pair.first, false);
+	ASSERT_NE(pair.second, nullptr);
+	EXPECT_EQ(pair_before.second, pair.second);
 }
 
-TEST(NonEmptyTree, InsertNode_SameKey_ptr)
+TEST(NonEmptyTree, InsertNode_DiffKey)
 {
 	BinaryTree tree;
 	tree.InsertNode(1);
-	EXPECT_NE(tree.InsertNode(1).second, nullptr);
-}
-
-TEST(NonEmptyTree, InsertNode_DiffKey_bool)
-{
-	BinaryTree tree;
-	tree.InsertNode(1);
-	EXPECT_EQ(tree.InsertNode(2).first, true);
-}
-
-TEST(NonEmptyTree, InsertNode_DiffKey_ptr)
-{
-	BinaryTree tree;
-	tree.InsertNode(1);
+	ASSERT_EQ(tree.InsertNode(2).first, true);
 	EXPECT_NE(tree.InsertNode(2).second, nullptr);
 }
 
@@ -102,8 +88,10 @@ TEST(NonEmptyTree, DeleteNode_NotExistedKey)
 TEST(NonEmptyTree, FindNode_ExistedKey)
 {
 	BinaryTree tree;
-	tree.InsertNode(1);
-	EXPECT_NE(tree.FindNode(1), nullptr);
+	std::pair<bool, Node_t*> pair = tree.InsertNode(1);
+	Node_t* found = tree.FindNode(1);
+	ASSERT_NE(found, nullptr);
+	EXPECT_EQ(pair.second, found);
 }
 
 TEST(NonEmptyTree, FindNode_NotExistedKey)
