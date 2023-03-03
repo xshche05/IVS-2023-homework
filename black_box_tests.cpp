@@ -39,6 +39,8 @@ TEST(EmptyTree, InsertNode)
 	std::pair<bool, Node_t*> pair = tree.InsertNode(1);
 	ASSERT_EQ(pair.first, true);
 	EXPECT_NE(pair.second, nullptr);
+	Node_t* found = tree.FindNode(1);
+	EXPECT_EQ(found, pair.second);
 }
 
 TEST(EmptyTree, DeleteNode)
@@ -53,6 +55,18 @@ TEST(EmptyTree, FindNode)
 	EXPECT_EQ(tree.FindNode(1), nullptr);
 }
 
+TEST(NonEmptyTree, InsertNode_DiffKey)
+{
+	BinaryTree tree;
+	tree.InsertNode(1);
+	std::pair<bool, Node_t*> pair = tree.InsertNode(2);
+	ASSERT_EQ(pair.first, true);
+	EXPECT_NE(pair.second, nullptr);
+	Node_t* found = tree.FindNode(2);
+	EXPECT_EQ(found, pair.second);
+	EXPECT_EQ(found->key, 2);
+}
+
 TEST(NonEmptyTree, InsertNode_SameKey)
 {
 	BinaryTree tree;
@@ -63,19 +77,12 @@ TEST(NonEmptyTree, InsertNode_SameKey)
 	EXPECT_EQ(pair_before.second, pair.second);
 }
 
-TEST(NonEmptyTree, InsertNode_DiffKey)
-{
-	BinaryTree tree;
-	tree.InsertNode(1);
-	ASSERT_EQ(tree.InsertNode(2).first, true);
-	EXPECT_NE(tree.InsertNode(2).second, nullptr);
-}
-
 TEST(NonEmptyTree, DeleteNode_ExistedKey)
 {
 	BinaryTree tree;
 	tree.InsertNode(1);
 	EXPECT_EQ(tree.DeleteNode(1), true);
+	EXPECT_EQ(tree.FindNode(1), nullptr);
 }
 
 TEST(NonEmptyTree, DeleteNode_NotExistedKey)

@@ -53,7 +53,8 @@ class HashMapTest : public ::testing::Test
 // put
 TEST_F(HashMapTest, put_one)
 {
-	EXPECT_EQ(hash_map_put(table, "key", 1), OK);
+	ASSERT_EQ(hash_map_put(table, "key", 1), OK);
+	EXPECT_EQ(hash_map_contains(table, "key"), true);
 }
 
 TEST_F(HashMapTest, put_more_than_could_fit)
@@ -64,7 +65,8 @@ TEST_F(HashMapTest, put_more_than_could_fit)
 	for (int i = 0; i < allocated+1; i++)
 	{
 		key = "key" + std::to_string(i);
-		EXPECT_EQ(hash_map_put(table, key.c_str(), 1), OK);
+		ASSERT_EQ(hash_map_put(table, key.c_str(), i), OK);
+		EXPECT_EQ(hash_map_contains(table, key.c_str()), true);
 	}
 }
 
@@ -76,8 +78,11 @@ TEST_F(HashMapTest, put_existed_key)
 
 TEST_F(HashMapTest, put_collision)
 {
+	int value;
 	ASSERT_EQ(hash_map_put(table, "abc", 1), OK);
-	EXPECT_EQ(hash_map_put(table, "cba", 2), OK);
+	EXPECT_EQ(hash_map_contains(table, "abc"), true);
+	ASSERT_EQ(hash_map_put(table, "cba", 2), OK);
+	EXPECT_EQ(hash_map_contains(table, "cba"), true);
 }
 
 // get
@@ -125,6 +130,7 @@ TEST_F(HashMapTest, pop_existed_first)
 	int value;
 	EXPECT_EQ(hash_map_pop(table, "key", &value), OK);
 	EXPECT_EQ(value, 1);
+	EXPECT_EQ(hash_map_contains(table, "key"), false);
 }
 
 TEST_F(HashMapTest, pop_existed_last)
@@ -134,6 +140,7 @@ TEST_F(HashMapTest, pop_existed_last)
 	int value;
 	EXPECT_EQ(hash_map_pop(table, "key2", &value), OK);
 	EXPECT_EQ(value, 2);
+	EXPECT_EQ(hash_map_contains(table, "key2"), false);
 }
 
 TEST_F(HashMapTest, pop_existed_not_first_or_last)
@@ -144,6 +151,7 @@ TEST_F(HashMapTest, pop_existed_not_first_or_last)
 	int value;
 	EXPECT_EQ(hash_map_pop(table, "key2", &value), OK);
 	EXPECT_EQ(value, 2);
+	EXPECT_EQ(hash_map_contains(table, "key2"), false);
 }
 
 TEST_F(HashMapTest, pop_not_existed)
@@ -165,6 +173,7 @@ TEST_F(HashMapTest, remove_existed)
 {
 	hash_map_put(table, "key", 1);
 	EXPECT_EQ(hash_map_remove(table, "key"), OK);
+	EXPECT_EQ(hash_map_contains(table, "key"), false);
 }
 
 TEST_F(HashMapTest, remove_not_existed)
@@ -194,13 +203,19 @@ TEST_F(HashMapTest, contains_not_existed)
 // size
 TEST_F(HashMapTest, size)
 {
-	EXPECT_EQ(hash_map_size(table), table->used);
+	hash_map_put(table, "key", 1);
+	hash_map_put(table, "key2", 2);
+	EXPECT_EQ(hash_map_size(table), 2);
+	hash_map_remove(table, "key");
+	EXPECT_EQ(hash_map_size(table), 1);
 }
 
 // capacity
 TEST_F(HashMapTest, capacity)
 {
-	EXPECT_EQ(hash_map_capacity(table), table->allocated);
+	EXPECT_EQ(hash_map_capacity(table), HASH_MAP_INIT_SIZE);
+	hash_map_reserve(table, 100);
+	EXPECT_EQ(hash_map_capacity(table), 100);
 }
 
 // reserve
@@ -215,14 +230,18 @@ TEST_F(HashMapTest, reserve_more_allocated)
 {
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
-	EXPECT_EQ(hash_map_reserve(table, table->allocated+1), OK);
+	int allocated = table->allocated;
+	EXPECT_EQ(hash_map_reserve(table, allocated+1), OK);
+	EXPECT_EQ(hash_map_capacity(table), allocated+1);
 }
 
 TEST_F(HashMapTest, reserve_same_allocated)
 {
 	hash_map_put(table, "key", 1);
 	hash_map_put(table, "key2", 2);
-	EXPECT_EQ(hash_map_reserve(table, table->allocated), OK);
+	int allocated = table->allocated;
+	EXPECT_EQ(hash_map_reserve(table, allocated), OK);
+	EXPECT_EQ(hash_map_capacity(table), allocated);
 }
 
 TEST_F(HashMapTest, reserve_more_than_sys_possible)
@@ -235,7 +254,7 @@ TEST_F(HashMapTest, clear)
 {
 	hash_map_put(table, "key", 1);
 	hash_map_clear(table);
-	EXPECT_EQ(table->used, 0);
+	EXPECT_EQ(hash_map_contains(table, "key"), false);
 }
 
 /*** Konec souboru white_box_tests.cpp ***/
