@@ -101,7 +101,7 @@ TEST(NonEmptyTree, FindNode_NotExistedKey)
 	EXPECT_EQ(tree.FindNode(2), nullptr);
 }
 
-TEST(TreeAxioms, Axiom1_allLeafsAreBlack)
+TEST(TreeAxioms, Axiom1)
 {
 	for (int j = 0; j < 10; j++)
 	{
@@ -119,7 +119,7 @@ TEST(TreeAxioms, Axiom1_allLeafsAreBlack)
 	}
 }
 
-TEST(TreeAxioms, Axiom2_RedsChildrenAreBlask)
+TEST(TreeAxioms, Axiom2)
 {
 	for (int j = 0; j < 10; j++)
 	{
@@ -141,7 +141,7 @@ TEST(TreeAxioms, Axiom2_RedsChildrenAreBlask)
 	}
 }
 
-TEST(TreeAxioms, Axiom3_NumberOfBlackNodesOnPaths)
+TEST(TreeAxioms, Axiom3)
 {
 	for (int j = 0; j < 10; j++)
 	{
